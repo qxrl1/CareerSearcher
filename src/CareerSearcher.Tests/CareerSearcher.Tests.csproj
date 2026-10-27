@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="10.0.14" />
+    <PackageReference Include="xunit.v3" Version="4.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CareerSearcher.API\CareerSearcher.API.csproj" />
+    <ProjectReference Include="..\CareerSearcher.Application\CareerSearcher.Application.csproj" />
+    <ProjectReference Include="..\CareerSearcher.Infrastructure\CareerSearcher.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>
