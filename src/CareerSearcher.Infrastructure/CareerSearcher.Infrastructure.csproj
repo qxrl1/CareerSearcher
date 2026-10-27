@@ -6,4 +6,22 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+	  <InternalsVisibleTo Include="CareerSearcher.Tests"/>	
+  </ItemGroup>
+	
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.14" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Scrappers\" />
+    <Folder Include="Workers\" />
+    <Folder Include="Persistence\Migrations\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CareerSearcher.Application\CareerSearcher.Application.csproj" />
+  </ItemGroup>
+
 </Project>
