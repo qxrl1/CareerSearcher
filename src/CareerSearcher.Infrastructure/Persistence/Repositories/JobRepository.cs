@@ -15,4 +15,17 @@ internal sealed class JobRepository(AppDbContext _dbContext)
             .Where(x => x.Company == company)
             .ToListAsync();
     }
+
+    public async Task SaveNewJobs(IEnumerable<Job> jobs)
+    {
+        var deduplicatedJobs = jobs.DistinctBy(x => x.UniqueId);
+    
+        foreach (var job in deduplicatedJobs)
+        {
+            if (await _dbContext.Jobs.AnyAsync(x => x.UniqueId == job.UniqueId))
+                continue;
+
+            await _dbContext.Jobs.AddAsync(job);
+        }
+    }
 }
