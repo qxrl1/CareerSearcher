@@ -2,7 +2,7 @@
 
 namespace CareerSearcher.Domain.Interfaces;
 
-internal interface IJobScrapper
+public interface IJobScrapper
 {
     Task<IEnumerable<Job>> SearchAsync(string query);
 }
