@@ -6,4 +6,21 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+	  <InternalsVisibleTo Include="CareerSearcher.Tests"/>	
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CareerSearcher.Domain\CareerSearcher.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Common\Behaviors\" />
+    <Folder Include="UseCases\Jobs\Queries\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="14.2.0" />
+  </ItemGroup>
+
 </Project>
