@@ -16,16 +16,21 @@ internal sealed class JobRepository(AppDbContext _dbContext)
             .ToListAsync();
     }
 
-    public async Task SaveNewJobs(IEnumerable<Job> jobs)
+    public async Task<IReadOnlyList<Job>> SaveNewJobs(IEnumerable<Job> jobs)
     {
         var deduplicatedJobs = jobs.DistinctBy(x => x.UniqueId);
-    
+        List<Job> newJobs = [];
+
         foreach (var job in deduplicatedJobs)
         {
             if (await _dbContext.Jobs.AnyAsync(x => x.UniqueId == job.UniqueId))
                 continue;
 
             await _dbContext.Jobs.AddAsync(job);
+
+            newJobs.Add(job);
         }
+
+        return newJobs;
     }
 }

@@ -5,5 +5,5 @@ namespace CareerSearcher.Domain.Repositories;
 public interface IJobRepository : IBaseRepository<Job>
 {
     Task<ICollection<Job>> GetAllFromCompany(string company);
-    Task SaveNewJobs(IEnumerable<Job> jobs);
+    Task<IReadOnlyList<Job>> SaveNewJobs(IEnumerable<Job> jobs);
 }

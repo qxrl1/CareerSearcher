@@ -35,6 +35,9 @@ internal sealed class LinkedinJobScrapper(BrowserContext _browserContext) : IJob
             jobs.Add(new Job(title, company, "", url));
         }
 
+        await page.CloseAsync();
+        await context.CloseAsync();
+
         return jobs;
     }
 }
