@@ -1,4 +1,6 @@
 ﻿using CareerSearcher.Application.UseCases.Jobs.Commands.ScrapeJobs;
+using CareerSearcher.Domain.Entities;
+using CareerSearcher.Domain.Events;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -11,7 +13,7 @@ internal sealed class ScrapperWorkerService : BackgroundService
     private readonly ILogger<ScrapperWorkerService> _logger;
     private readonly IServiceScopeFactory           _serviceScopeFactory;
 
-    private readonly TimeSpan DELAY_IN_MINUTES = TimeSpan.FromMinutes(5);
+    private readonly TimeSpan DELAY_IN_MINUTES = TimeSpan.FromMinutes(1);
 
     private readonly string[] DEFAULT_QUERIES = [
         "Desenvolvedor",
@@ -51,7 +53,10 @@ internal sealed class ScrapperWorkerService : BackgroundService
         using var scope = _serviceScopeFactory.CreateScope();
         var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
+        List<Job> jobs = [];
         foreach (var query in DEFAULT_QUERIES)
-            await mediator.Send(new ScrapeJobsCommand(query), cancellationToken);
+            jobs.AddRange(await mediator.Send(new ScrapeJobsCommand(query), cancellationToken));
+
+        await mediator.Publish(new ScrapingFinishedEvent(jobs));
     }
 }
