@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-	  <InternalsVisibleTo Include="CareerSearcher.Tests"/>	
+	  <InternalsVisibleTo Include="CareerSearcher.Tests" />	
   </ItemGroup>
 
   <ItemGroup>
@@ -15,12 +15,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Common\Behaviors\" />
     <Folder Include="UseCases\Jobs\Queries\" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="MediatR" Version="14.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="10.0.14" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.14" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.14" />
   </ItemGroup>
 
 </Project>
