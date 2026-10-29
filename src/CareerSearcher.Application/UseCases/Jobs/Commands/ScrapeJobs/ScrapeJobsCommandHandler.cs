@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace CareerSearcher.Application.UseCases.Jobs.Commands.ScrapeJobs;
 
-internal sealed class ScrapeJobsCommandHandler : IRequestHandler<ScrapeJobsCommand>
+internal sealed class ScrapeJobsCommandHandler : IRequestHandler<ScrapeJobsCommand, IEnumerable<Job>>
 {
     private readonly ILogger<ScrapeJobsCommandHandler>  _logger;
     private readonly IEnumerable<IJobScrapper>          _scrappers;
@@ -16,16 +16,16 @@ internal sealed class ScrapeJobsCommandHandler : IRequestHandler<ScrapeJobsComma
     public ScrapeJobsCommandHandler(ILogger<ScrapeJobsCommandHandler> logger, 
         IEnumerable<IJobScrapper> scrappers, IJobRepository jobRepository, IUnitOfWork unitOfWork)
     {
-        _logger         = logger;
-        _scrappers      = scrappers;
-        _jobRepository  = jobRepository;
-        _unitOfWork     = unitOfWork;
+        _logger                 = logger;
+        _scrappers              = scrappers;
+        _jobRepository          = jobRepository;
+        _unitOfWork             = unitOfWork;
     }
 
-    public async Task Handle(ScrapeJobsCommand request, CancellationToken cancellationToken)
+    public async Task<IEnumerable<Job>> Handle(ScrapeJobsCommand request, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(request.Query))
-            return;
+            return default;
 
         _logger.LogInformation("Starting to scrape new jobs");
 
@@ -39,8 +39,11 @@ internal sealed class ScrapeJobsCommandHandler : IRequestHandler<ScrapeJobsComma
 
         _logger.LogInformation("Done scrapping new jobs!");
 
-        await _jobRepository.SaveNewJobs(jobs);
+        var newJobs = await _jobRepository.SaveNewJobs(jobs);
+        
         await _unitOfWork.CommitChangesAsync(cancellationToken);
         _logger.LogInformation("Saved all new scrapped jobs!");
+
+        return newJobs;
     }
 }
