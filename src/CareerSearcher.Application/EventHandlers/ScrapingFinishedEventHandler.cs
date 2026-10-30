@@ -9,13 +9,13 @@ namespace CareerSearcher.Application.EventHandlers;
 internal sealed class ScrapingFinishedEventHandler : INotificationHandler<ScrapingFinishedEvent>
 {
     private readonly ILogger<ScrapingFinishedEventHandler>  _logger;
-    private readonly IDiscordWebhookService                 _discordWebhookService;
+    private readonly IDiscordNotificationService            _discordNotificationService;
 
-    public ScrapingFinishedEventHandler(ILogger<ScrapingFinishedEventHandler> logger, 
-        IDiscordWebhookService discordWebhookService)
+    public ScrapingFinishedEventHandler(ILogger<ScrapingFinishedEventHandler> logger,
+        IDiscordNotificationService discordNotificationService)
     {
-        _logger                 = logger;
-        _discordWebhookService  = discordWebhookService;
+        _logger                     = logger;
+        _discordNotificationService = discordNotificationService;
     }
 
     public async Task Handle(ScrapingFinishedEvent notification, CancellationToken cancellationToken)
@@ -26,7 +26,7 @@ internal sealed class ScrapingFinishedEventHandler : INotificationHandler<Scrapi
         {
             foreach (var job in notification.Jobs)
             {
-                await _discordWebhookService.Send(job, cancellationToken);
+                await _discordNotificationService.SendAsync(job, cancellationToken);
                 await Task.Delay(5000);
             }
 

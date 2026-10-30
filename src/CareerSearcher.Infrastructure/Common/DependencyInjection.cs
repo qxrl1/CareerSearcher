@@ -2,6 +2,7 @@
 using CareerSearcher.Domain.Interfaces;
 using CareerSearcher.Domain.Repositories;
 using CareerSearcher.Infrastructure.Browser;
+using CareerSearcher.Infrastructure.Discord;
 using CareerSearcher.Infrastructure.Notification;
 using CareerSearcher.Infrastructure.Persistence.Contexts;
 using CareerSearcher.Infrastructure.Persistence.Repositories;
@@ -31,6 +32,15 @@ public static class DependencyInjection
         services.AddTransient<IJobScrapper, LinkedinJobScrapper>();
 
         services.AddHostedService<ScrapperWorkerService>();
+
+        string webhookUrl = configuration.GetValue<string>("WebhookUrl")
+            ?? throw new ArgumentNullException("Webhook not found");
+
+        services.AddHttpClient<IDiscordNotificationService, DiscordNotificationService>(cfg =>
+        {
+            cfg.BaseAddress = new Uri(webhookUrl);
+            cfg.DefaultRequestHeaders.Add("accept", "application/json");
+        });
 
         return services;
     }
