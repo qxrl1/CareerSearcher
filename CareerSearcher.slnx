@@ -1,1 +1,9 @@
-<Solution />
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/CareerSearcher.API/CareerSearcher.API.csproj" />
+    <Project Path="src/CareerSearcher.Application/CareerSearcher.Application.csproj" />
+    <Project Path="src/CareerSearcher.Domain/CareerSearcher.Domain.csproj" />
+    <Project Path="src/CareerSearcher.Infrastructure/CareerSearcher.Infrastructure.csproj" />
+    <Project Path="src/CareerSearcher.Tests/CareerSearcher.Tests.csproj" Id="49f08652-2f9d-4e9c-9e5a-f747dc67ede4" />
+  </Folder>
+</Solution>
