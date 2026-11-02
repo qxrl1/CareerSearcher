@@ -14,6 +14,11 @@ internal abstract class BaseRepository<T>(DbContext _dbContext)
         await _dbSet.AddAsync(entity);
     }
 
+    public async Task<int> Count()
+    {
+        return await _dbSet.CountAsync();
+    }
+
     public void Delete(T entity)
     {
         _dbSet.Remove(entity);
@@ -22,6 +27,15 @@ internal abstract class BaseRepository<T>(DbContext _dbContext)
     public async Task<T?> Get(Guid Id)
     {
         return await _dbSet.FindAsync(Id);
+    }
+
+    public async Task<IEnumerable<T>> GetAll(int offset, int count)
+    {
+        return await _dbSet
+            .AsNoTracking()
+            .Skip((offset - 1) * count)
+            .Take(count)
+            .ToArrayAsync();
     }
 
     public void Update(T entity)
