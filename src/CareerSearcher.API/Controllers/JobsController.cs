@@ -17,7 +17,10 @@ public class JobsController(IMediator _mediator) : ControllerBase
     public async Task<ActionResult<Pagination<Job>>> GetJobs([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
     {
         var response = await _mediator.Send(new GetJobsCommand(page, pageSize));
+        
+        if (response.IsFailure)
+            return BadRequest();
 
-        return Ok(response);
+        return Ok(response.Value);
     }
 }

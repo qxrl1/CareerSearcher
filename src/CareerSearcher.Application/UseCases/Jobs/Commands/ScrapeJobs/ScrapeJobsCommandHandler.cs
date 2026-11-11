@@ -1,4 +1,6 @@
-﻿using CareerSearcher.Domain.Entities;
+﻿using CareerSearcher.Domain.Common;
+using CareerSearcher.Domain.Entities;
+using CareerSearcher.Domain.Errors;
 using CareerSearcher.Domain.Interfaces;
 using CareerSearcher.Domain.Repositories;
 using MediatR;
@@ -6,7 +8,7 @@ using Microsoft.Extensions.Logging;
 
 namespace CareerSearcher.Application.UseCases.Jobs.Commands.ScrapeJobs;
 
-internal sealed class ScrapeJobsCommandHandler : IRequestHandler<ScrapeJobsCommand, IEnumerable<Job>>
+internal sealed class ScrapeJobsCommandHandler : IRequestHandler<ScrapeJobsCommand, Result<IReadOnlyList<Job>>>
 {
     private readonly ILogger<ScrapeJobsCommandHandler>  _logger;
     private readonly IEnumerable<IJobScrapper>          _scrappers;
@@ -22,10 +24,10 @@ internal sealed class ScrapeJobsCommandHandler : IRequestHandler<ScrapeJobsComma
         _unitOfWork             = unitOfWork;
     }
 
-    public async Task<IEnumerable<Job>> Handle(ScrapeJobsCommand request, CancellationToken cancellationToken)
+    public async Task<Result<IReadOnlyList<Job>>> Handle(ScrapeJobsCommand request, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(request.Query))
-            return default;
+            return ScrapeJobsErrors.EmptyQuery;
 
         _logger.LogInformation("Starting to scrape new jobs");
 
@@ -44,6 +46,6 @@ internal sealed class ScrapeJobsCommandHandler : IRequestHandler<ScrapeJobsComma
         await _unitOfWork.CommitChangesAsync(cancellationToken);
         _logger.LogInformation("Saved all new scrapped jobs!");
 
-        return newJobs;
+        return Result<IReadOnlyList<Job>>.Success(newJobs);
     }
 }
