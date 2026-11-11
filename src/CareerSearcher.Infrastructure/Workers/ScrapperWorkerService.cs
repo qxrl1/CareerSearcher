@@ -5,6 +5,7 @@ using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using System.ComponentModel.DataAnnotations;
 
 namespace CareerSearcher.Infrastructure.Workers;
 
@@ -55,7 +56,12 @@ internal sealed class ScrapperWorkerService : BackgroundService
 
         List<Job> jobs = [];
         foreach (var query in DEFAULT_QUERIES)
-            jobs.AddRange(await mediator.Send(new ScrapeJobsCommand(query), cancellationToken));
+        {
+            var res = await mediator.Send(new ScrapeJobsCommand(query), cancellationToken);
+
+            if (res.IsSuccess)
+                jobs.AddRange(res.Value!);
+        }
 
         await mediator.Publish(new ScrapingFinishedEvent(jobs));
     }
