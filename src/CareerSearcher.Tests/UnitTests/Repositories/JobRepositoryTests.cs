@@ -46,4 +46,23 @@ public class JobRepositoryTests
                 {job.CreatedAt}
            """);
     }
+
+    [Fact]
+    public async Task Should_Search_Jobs_Across_Title_Company_And_Description()
+    {
+        await _jobRepository.Add(new Job("Backend Developer", "Northwind", "Build APIs", "https://example.com/1"));
+        await _jobRepository.Add(new Job("Product Designer", "Backend Studio", "Design experiences", "https://example.com/2"));
+        await _jobRepository.Add(new Job("QA Engineer", "Contoso", "Backend quality", "https://example.com/3"));
+        await _dbContext.SaveChangesAsync(TestContext.Current.CancellationToken);
+
+        var (jobs, amount) = await _jobRepository.GetPage("Backend", 1, 2);
+
+        Assert.Equal(3, amount);
+        Assert.Equal(2, jobs.Count);
+
+        var (remainingJobs, remainingAmount) = await _jobRepository.GetPage("Backend", 2, 2);
+
+        Assert.Equal(amount, remainingAmount);
+        Assert.Single(remainingJobs);
+    }
 }
