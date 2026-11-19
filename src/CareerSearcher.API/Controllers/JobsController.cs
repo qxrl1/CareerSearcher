@@ -14,9 +14,12 @@ public class JobsController(IMediator _mediator) : ControllerBase
 {
     [HttpGet]
     [ProducesResponseType(typeof(Pagination<Job>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<Pagination<Job>>> GetJobs([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+    public async Task<ActionResult<Pagination<Job>>> GetJobs(
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 10,
+        [FromQuery] string? search = null)
     {
-        var response = await _mediator.Send(new GetJobsCommand(page, pageSize));
+        var response = await _mediator.Send(new GetJobsCommand(page, pageSize, search));
         
         if (response.IsFailure)
             return BadRequest();

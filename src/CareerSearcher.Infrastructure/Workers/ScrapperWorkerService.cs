@@ -14,7 +14,7 @@ internal sealed class ScrapperWorkerService : BackgroundService
     private readonly ILogger<ScrapperWorkerService> _logger;
     private readonly IServiceScopeFactory           _serviceScopeFactory;
 
-    private readonly TimeSpan DELAY_IN_MINUTES = TimeSpan.FromMinutes(1);
+    private readonly TimeSpan DELAY_IN_MINUTES = TimeSpan.FromMinutes(30);
 
     private readonly string[] DEFAULT_QUERIES = [
         "Desenvolvedor",

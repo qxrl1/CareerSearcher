@@ -1,0 +1,72 @@
+.message {
+  padding: 22px 26px;
+}
+
+.message-error {
+  color: #9c3d37;
+  font-size: 13px;
+}
+
+.message-error p {
+  margin: 0 0 8px;
+}
+
+.text-button {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #28664f;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.loading-state,
+.empty-state {
+  display: flex;
+  min-height: 220px;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  color: #7d8983;
+  font-size: 13px;
+}
+
+.spinner {
+  width: 22px;
+  height: 22px;
+  margin-bottom: 12px;
+  border: 2px solid #dfeae4;
+  border-top-color: #398168;
+  border-radius: 50%;
+  animation: spin 750ms linear infinite;
+}
+
+.empty-icon {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  margin-bottom: 7px;
+  border-radius: 12px;
+  background: #eff7f2;
+  color: #35735e;
+  font-size: 22px;
+}
+
+.empty-state h3 {
+  margin: 4px 0;
+  color: #31443b;
+  font-size: 15px;
+}
+
+.empty-state p {
+  margin: 4px 0;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

@@ -16,6 +16,26 @@ internal sealed class JobRepository(AppDbContext _dbContext)
             .ToListAsync();
     }
 
+    public async Task<(IReadOnlyList<Job> Jobs, int Amount)> GetPage(string? search, int page, int pageSize)
+    {
+        var jobs = _dbContext.Jobs.AsNoTracking().AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            var keywords = search.Trim();
+            jobs = jobs.Where(job => job.Name.Contains(keywords) || job.Company.Contains(keywords) || job.Description.Contains(keywords));
+        }
+
+        var amount = await jobs.CountAsync();
+        var data = await jobs
+            .OrderByDescending(job => job.Id)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        return (data, amount);
+    }
+
     public async Task<IReadOnlyList<Job>> SaveNewJobs(IEnumerable<Job> jobs)
     {
         var deduplicatedJobs = jobs.DistinctBy(x => x.UniqueId);

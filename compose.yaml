@@ -11,8 +11,20 @@ services:
       - "ConnectionStrings__SqlConnection=Data Source=app-db,1433;Initial Catalog=${DB_NAME};User ID=sa;Password=${DB_PASSWORD};Connect Timeout=30;Encrypt=False;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False;Command Timeout=30"
       - "WebhookUrl=${WEBHOOK_URL}"
     networks:
-      careersearcher-network:
-    
+      - careersearcher-network
+
+  app-frontend:
+    container_name: careersearcher-frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "5173:80"
+    depends_on:
+      - app-api
+    networks:
+      - careersearcher-network
+
   app-db:
     container_name: app-db
     image: mcr.microsoft.com/mssql/server:2025-latest
