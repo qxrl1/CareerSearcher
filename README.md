@@ -15,6 +15,7 @@ A aplicação possui uma API REST versionada, um worker em segundo plano e um sc
 - Evita duplicatas usando `Name + Company` como identificador único.
 - Envia novas vagas como embeds para um webhook do Discord.
 - Expõe vagas armazenadas em uma API REST paginada.
+- Disponibiliza uma interface web para pesquisar e visualizar vagas.
 - Disponibiliza a documentação Swagger/OpenAPI.
 - Executa migrações/criação do banco na inicialização da API.
 
@@ -30,18 +31,22 @@ A aplicação possui uma API REST versionada, um worker em segundo plano e um sc
 - Docker e Docker Compose
 - xUnit/Moq
 - GitHub Actions
+- React, TypeScript e Vite
 
 ## Arquitetura
 
 O projeto segue uma separação em camadas:
 
 ```text
-src/
-├── CareerSearcher.API
-├── CareerSearcher.Application
-├── CareerSearcher.Domain
-├── CareerSearcher.Infrastructure
-└── CareerSearcher.Tests
+CareerSearcher/
+├── src/
+│   ├── CareerSearcher.API
+│   ├── CareerSearcher.Application
+│   ├── CareerSearcher.Domain
+│   ├── CareerSearcher.Infrastructure
+│   └── CareerSearcher.Tests
+└── frontend/
+    └── aplicação React com Vite
 ```
 
 - **Domain**: entidades, erros, resultados, eventos e contratos do domínio.
@@ -49,6 +54,7 @@ src/
 - **Infrastructure**: scraper Playwright, persistência SQL Server, worker, Discord e integração externa.
 - **API**: configuração do ASP.NET Core, versionamento e controllers.
 - **Tests**: testes unitários e de integração do scraper, repositório e handlers.
+- **frontend**: interface web para pesquisa, paginação e detalhes das vagas.
 
 O fluxo principal é:
 
@@ -68,6 +74,7 @@ O fluxo principal é:
 ### Execução local
 
 - SDK .NET 10
+- Node.js 20.19+ ou 22.12+
 - SQL Server disponível localmente ou em container
 - Navegadores do Playwright instalados
 
@@ -101,6 +108,7 @@ Os serviços disponibilizados são:
 | ---------- | ----------------------------- |
 | API        | http://localhost:8080         |
 | Swagger UI | http://localhost:8080/swagger |
+| Frontend   | http://localhost:5173         |
 | SQL Server | `localhost:1433`              |
 
 ## Executando localmente
@@ -130,6 +138,23 @@ dotnet run --project src/CareerSearcher.API
 
 Por padrão, o perfil `http` inicia em `http://localhost:5043`.
 
+### Executando o frontend
+
+Com a API em execução em `http://localhost:5043`, abra outro terminal:
+
+```powershell
+cd frontend
+npm install
+npm run dev
+```
+
+O Vite inicia a interface em `http://localhost:5173` e encaminha as chamadas de
+`/api` para a API local. Para usar outro endereço durante o desenvolvimento,
+copie `frontend/.env.example` para `frontend/.env` e ajuste `API_URL`.
+Em uma implantação sem proxy de mesma origem, configure `VITE_API_BASE_URL`
+com a URL base da API (por exemplo, `https://api.example.com/api/v1`) e permita
+a origem do frontend na configuração de CORS da API.
+
 ## API
 
 Todas as rotas de versão 1 usam o prefixo:
@@ -146,10 +171,11 @@ GET /api/v1/jobs?page=1&pageSize=10
 
 Parâmetros:
 
-| Parâmetro  | Tipo | Padrão | Descrição                                                                      |
-| ---------- | ---- | -----: | ------------------------------------------------------------------------------ |
-| `page`     | int  |    `1` | Página solicitada. Valores menores ou iguais a zero são normalizados para `1`. |
-| `pageSize` | int  |   `10` | Quantidade de vagas por página.                                                |
+| Parâmetro  | Tipo  | Padrão | Descrição                                                                      |
+| ---------- | ----- | -----: | ------------------------------------------------------------------------------ |
+| `page`     | int   |    `1` | Página solicitada. Valores menores ou iguais a zero são normalizados para `1`. |
+| `pageSize` | int   |   `10` | Quantidade de vagas por página.                                                |
+| `search`   | texto |        | Busca em título, empresa e descrição, antes da paginação.                      |
 
 A resposta contém metadados de paginação e os registros de vagas:
 
