@@ -11,11 +11,11 @@ internal sealed class GetJobsCommandHandler(IJobRepository _jobRepository)
     public async Task<Result<Pagination<Job>>> Handle(GetJobsCommand request, CancellationToken cancellationToken)
     {
         int page    = request.Page <= 0 ? 1 : request.Page;
-        int amount  = await _jobRepository.Count();
+        int pageSize = request.PageSize <= 0 ? 10 : request.PageSize;
 
-        var jobs    = await _jobRepository.GetAll(page, request.PageSize);
+        var (jobs, amount) = await _jobRepository.GetPage(request.Search, page, pageSize);
         
-        var pagination = new Pagination<Job>(page, request.PageSize, amount, [.. jobs]);
+        var pagination = new Pagination<Job>(page, pageSize, amount, [.. jobs]);
 
         return pagination;
     }
